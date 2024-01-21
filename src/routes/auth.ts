@@ -65,4 +65,20 @@ authRouter.get(
   }
 );
 
+authRouter.post(
+  "/leave/room",
+  authenticateToken,
+  async (req: Request, res: Response) => {
+    const { error, value: body } = roomIdValidation(req.body);
+    if (error) return res.status(400).send(error.details[0].message);
+
+    try {
+      const response = await controller.leaveRoom(body, req);
+      return res.send(response);
+    } catch (err: any) {
+      return res.status(403).send(err.toString());
+    }
+  }
+);
+
 export default authRouter;

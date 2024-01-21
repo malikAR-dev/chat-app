@@ -3,6 +3,7 @@ import {
   PostUserResponse,
   JoinRoomResponse,
   GetJoinedRoomsResponse,
+  LeaveRoomResponse,
 } from "../../model/users";
 
 export const postUserResponseExample: PostUserResponse = {
@@ -36,3 +37,7 @@ export const getJoinedRoomsResponseExample: GetJoinedRoomsResponse[] = [
     roomId: 1,
   },
 ];
+
+export const leaveRoomResponseExample: LeaveRoomResponse = {
+  message: "Room leaved Successfully",
+};

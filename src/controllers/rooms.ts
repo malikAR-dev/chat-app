@@ -13,6 +13,7 @@ import {
 } from "./examples/rooms";
 import { RequestUser } from "../types/requestUser";
 import Users from "../model/users";
+import { joinRoomNotification } from "../socket";
 
 @Tags("Rooms")
 @Security("bearerAuth")
@@ -57,11 +58,13 @@ const createRoom = async (
 
   const savedRoom = await room.save();
 
-  await Users.findByIdAndUpdate(userObjectId, {
+  const user = await Users.findByIdAndUpdate(userObjectId, {
     $push: {
       roomsId: savedRoom._id,
     },
   });
+
+  joinRoomNotification(savedRoom.roomId, `${user.name} joined ${title} room`);
 
   return {
     message: "Room created successfully",

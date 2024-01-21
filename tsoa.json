@@ -1,0 +1,21 @@
+{
+  "entryFile": "src/app.ts",
+  "noImplicitAdditionalProperties": "throw-on-extras",
+  "spec": {
+    "outputDirectory": "public",
+    "securityDefinitions": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    },
+    "tags": [
+      { "name": "Users", "description": "Operations about Users" },
+      { "name": "Rooms", "description": "Operations about Rooms" },
+      { "name": "Chats", "description": "Operations about Chats" }
+    ],
+    "yaml": true,
+    "specVersion": 3
+  }
+}

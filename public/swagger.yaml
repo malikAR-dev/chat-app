@@ -1,0 +1,538 @@
+components:
+    examples: {}
+    headers: {}
+    parameters: {}
+    requestBodies: {}
+    responses: {}
+    schemas:
+        PostUserResponse:
+            properties:
+                message:
+                    type: string
+            required:
+                - message
+            type: object
+            additionalProperties: false
+        PostUserPayload:
+            properties:
+                name:
+                    type: string
+                    example: Ali
+                email:
+                    type: string
+                    example: ali@gmail.com
+                password:
+                    type: string
+                    example: ali123
+                mobileNumber:
+                    type: string
+                    example: '03030621541'
+            required:
+                - name
+                - email
+                - password
+                - mobileNumber
+            type: object
+            additionalProperties: false
+        LoginUserResponse:
+            properties:
+                message:
+                    type: string
+                accessToken:
+                    type: string
+            required:
+                - message
+                - accessToken
+            type: object
+            additionalProperties: false
+        LoginUserPayload:
+            properties:
+                email:
+                    type: string
+                    example: ali@gmail.com
+                password:
+                    type: string
+                    example: ali123
+            required:
+                - email
+                - password
+            type: object
+            additionalProperties: false
+        JoinRoomResponse:
+            properties:
+                message:
+                    type: string
+                messages:
+                    items:
+                        properties:
+                            sender:
+                                properties:
+                                    id: {type: number, format: double}
+                                    name: {type: string}
+                                required:
+                                    - id
+                                    - name
+                                type: object
+                            createdAt:
+                                type: string
+                                format: date-time
+                            body:
+                                type: string
+                        required:
+                            - sender
+                            - createdAt
+                            - body
+                        type: object
+                    type: array
+            required:
+                - message
+                - messages
+            type: object
+            additionalProperties: false
+        JoinRoomPayload:
+            properties:
+                roomId:
+                    type: number
+                    format: double
+                    example: 1
+            required:
+                - roomId
+            type: object
+            additionalProperties: false
+        GetJoinedRoomsResponse:
+            properties:
+                title:
+                    type: string
+                description:
+                    type: string
+                adminName:
+                    type: string
+                roomId:
+                    type: number
+                    format: double
+            required:
+                - title
+                - description
+                - adminName
+                - roomId
+            type: object
+            additionalProperties: false
+        PostRoomResponse:
+            properties:
+                message:
+                    type: string
+            required:
+                - message
+            type: object
+            additionalProperties: false
+        PostRoomPayload:
+            properties:
+                title:
+                    type: string
+                    example: Friends
+                description:
+                    type: string
+                    example: 'Get Together'
+            required:
+                - title
+                - description
+            type: object
+            additionalProperties: false
+        GetRoomResponse:
+            properties:
+                title:
+                    type: string
+                description:
+                    type: string
+                roomId:
+                    type: number
+                    format: double
+                adminName:
+                    type: string
+            required:
+                - title
+                - description
+                - roomId
+                - adminName
+            type: object
+            additionalProperties: false
+        CreateChatResponse:
+            properties:
+                message:
+                    type: string
+            required:
+                - message
+            type: object
+            additionalProperties: false
+        ChatType:
+            enum:
+                - 'Room Chat'
+                - 'Personal Chat'
+            type: string
+        CreateChatPayload:
+            properties:
+                chatType:
+                    $ref: '#/components/schemas/ChatType'
+                    example: 'Room Chat'
+                message:
+                    type: string
+                    example: Hi!
+            required:
+                - chatType
+                - message
+            type: object
+            additionalProperties: false
+        GetRoomMessagesResponse:
+            properties:
+                title:
+                    type: string
+                description:
+                    type: string
+                roomAdmin:
+                    type: string
+                roomId:
+                    type: number
+                    format: double
+                messages:
+                    items:
+                        properties:
+                            createdAt:
+                                type: string
+                                format: date-time
+                            senderName:
+                                type: string
+                            body:
+                                type: string
+                        required:
+                            - createdAt
+                            - senderName
+                            - body
+                        type: object
+                    type: array
+            required:
+                - title
+                - description
+                - roomAdmin
+                - roomId
+                - messages
+            type: object
+            additionalProperties: false
+        GetPersonalMessagesResponse:
+            properties:
+                body:
+                    type: string
+                senderName:
+                    type: string
+                createdAt:
+                    type: string
+                    format: date-time
+            required:
+                - body
+                - senderName
+                - createdAt
+            type: object
+            additionalProperties: false
+    securitySchemes:
+        bearerAuth:
+            type: http
+            scheme: bearer
+            bearerFormat: JWT
+info:
+    title: api
+    version: 1.0.0
+    license:
+        name: ISC
+    contact: {}
+openapi: 3.0.0
+paths:
+    /users/register:
+        post:
+            operationId: CreateUser
+            responses:
+                '200':
+                    description: Ok
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/PostUserResponse'
+                            examples:
+                                'Example 1':
+                                    value: {message: 'User Registered Successfully'}
+            summary: 'Create new user by providing: Name, email, password etc..'
+            tags:
+                - Users
+            security: []
+            parameters: []
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/PostUserPayload'
+    /users/login:
+        post:
+            operationId: LoginUser
+            responses:
+                '200':
+                    description: Ok
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/LoginUserResponse'
+                            examples:
+                                'Example 1':
+                                    value: {message: 'User LoggedIn Successfully', accessToken: efen2uh78yggbshgw87t88g}
+            summary: 'Login user by providing: email and password.'
+            tags:
+                - Users
+            security: []
+            parameters: []
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/LoginUserPayload'
+    /users/join/room:
+        post:
+            operationId: JoinRoom
+            responses:
+                '200':
+                    description: Ok
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/JoinRoomResponse'
+                            examples:
+                                'Example 1':
+                                    value: {message: 'Room joined Successfully', messages: [{body: Hi, createdAt: '2020-12-11T19:00:00.000Z', sender: {name: Ali, id: 1}}]}
+            summary: 'User can join the Room by providing roomId.'
+            tags:
+                - Users
+            security:
+                -
+                    bearerAuth: []
+            parameters: []
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/JoinRoomPayload'
+        get:
+            operationId: GetJoinedRooms
+            responses:
+                '200':
+                    description: Ok
+                    content:
+                        application/json:
+                            schema:
+                                items:
+                                    $ref: '#/components/schemas/GetJoinedRoomsResponse'
+                                type: array
+                            examples:
+                                'Example 1':
+                                    value: [{title: Friends, description: 'Get Together', adminName: Ali, roomId: 1}]
+            summary: 'User can get all the Joined Rooms.'
+            tags:
+                - Users
+            security:
+                -
+                    bearerAuth: []
+            parameters: []
+    /rooms:
+        post:
+            operationId: CreateRoom
+            responses:
+                '200':
+                    description: Ok
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/PostRoomResponse'
+                            examples:
+                                'Example 1':
+                                    value: {message: 'Room created successfully'}
+            summary: 'Create new room with the following attribute: title, description.'
+            tags:
+                - Rooms
+            security:
+                -
+                    bearerAuth: []
+            parameters: []
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/PostRoomPayload'
+        get:
+            operationId: GetRooms
+            responses:
+                '200':
+                    description: Ok
+                    content:
+                        application/json:
+                            schema:
+                                items:
+                                    $ref: '#/components/schemas/GetRoomResponse'
+                                type: array
+                            examples:
+                                'Example 1':
+                                    value: [{title: Friends, description: 'Get Together', roomId: 1, adminName: Ali}]
+            summary: 'Get all rooms.'
+            tags:
+                - Rooms
+            security:
+                -
+                    bearerAuth: []
+            parameters: []
+    '/chats/rooms/{roomId}':
+        post:
+            operationId: SendMessageToRoom
+            responses:
+                '200':
+                    description: Ok
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/CreateChatResponse'
+                            examples:
+                                'Example 1':
+                                    value: {message: 'Message send successfully'}
+            description: 'chatType will be ''Room Chat'''
+            summary: 'Send new message within room with the following attribute: chatType, message etc..'
+            tags:
+                - Chats
+            security:
+                -
+                    bearerAuth: []
+            parameters:
+                -
+                    in: path
+                    name: roomId
+                    required: true
+                    schema:
+                        format: double
+                        type: number
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/CreateChatPayload'
+        get:
+            operationId: GetRoomMessages
+            responses:
+                '200':
+                    description: Ok
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/GetRoomMessagesResponse'
+                            examples:
+                                'Example 1':
+                                    value: {title: Friends, description: 'Get Together', roomAdmin: Ali, roomId: 1, messages: [{body: Hi!, senderName: Malik, createdAt: '2020-12-11T19:00:00.000Z'}]}
+            summary: 'Get all messages within room.'
+            tags:
+                - Chats
+            security:
+                -
+                    bearerAuth: []
+            parameters:
+                -
+                    in: path
+                    name: roomId
+                    required: true
+                    schema:
+                        format: double
+                        type: number
+    '/chats/rooms/{roomId}/users/{userId}':
+        post:
+            operationId: SendMessageToUser
+            responses:
+                '200':
+                    description: Ok
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/CreateChatResponse'
+                            examples:
+                                'Example 1':
+                                    value: {message: 'Message send successfully'}
+            description: 'chatType will be ''Personal Chat'''
+            summary: 'Send new message to user within room with the following attribute: chatType, message etc..'
+            tags:
+                - Chats
+            security:
+                -
+                    bearerAuth: []
+            parameters:
+                -
+                    in: path
+                    name: roomId
+                    required: true
+                    schema:
+                        format: double
+                        type: number
+                -
+                    in: path
+                    name: userId
+                    required: true
+                    schema:
+                        format: double
+                        type: number
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/CreateChatPayload'
+        get:
+            operationId: GetPersonalMessages
+            responses:
+                '200':
+                    description: Ok
+                    content:
+                        application/json:
+                            schema:
+                                items:
+                                    $ref: '#/components/schemas/GetPersonalMessagesResponse'
+                                type: array
+                            examples:
+                                'Example 1':
+                                    value: [{body: Hi!, senderName: Malik, createdAt: '2020-12-11T19:00:00.000Z'}]
+            summary: 'Get all messages with user within room.'
+            tags:
+                - Chats
+            security:
+                -
+                    bearerAuth: []
+            parameters:
+                -
+                    in: path
+                    name: roomId
+                    required: true
+                    schema:
+                        format: double
+                        type: number
+                -
+                    in: path
+                    name: userId
+                    required: true
+                    schema:
+                        format: double
+                        type: number
+servers:
+    -
+        url: /
+tags:
+    -
+        name: Users
+        description: 'Operations about Users'
+    -
+        name: Rooms
+        description: 'Operations about Rooms'
+    -
+        name: Chats
+        description: 'Operations about Chats'

@@ -14,6 +14,7 @@ The Chat App APIs simplifies the development of real-time chat applications by o
 - Send Message in Rooms
 - Send Message To User Within Room
 - Get Notification When Someone Join/Leave Room
+- Swagger Docs
 
 ## Installation
 
@@ -26,4 +27,7 @@ npm install
 
 # Start project
 npm start
+
+# APIs
+http://localhost:8080/
 ```

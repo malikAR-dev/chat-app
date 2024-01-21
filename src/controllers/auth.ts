@@ -6,6 +6,7 @@ import Users, {
   GetJoinedRoomsResponse,
   JoinRoomPayload,
   JoinRoomResponse,
+  LeaveRoomResponse,
   LoginUserPayload,
   LoginUserResponse,
   PostUserPayload,
@@ -14,6 +15,7 @@ import Users, {
 import {
   getJoinedRoomsResponseExample,
   joinRoomResponseExample,
+  leaveRoomResponseExample,
   loginUserResponseExample,
   postUserResponseExample,
 } from "./examples/auth";
@@ -21,7 +23,7 @@ import { generateAccessToken } from "../utils/generateAccessToken";
 import { RequestUser } from "../types/requestUser";
 import Rooms from "../model/rooms";
 import Chats from "../model/chats";
-import { joinRoomNotification } from "../socket";
+import { joinRoomNotification, leaveRoomNotification } from "../socket";
 
 @Tags("Users")
 @Route("/users")
@@ -71,6 +73,19 @@ export class UserController {
     @Request() req: express.Request
   ): Promise<GetJoinedRoomsResponse[]> {
     return getJoinedRooms(req.user as RequestUser);
+  }
+
+  /**
+   * @summary User can leave the Room by providing roomId.
+   */
+  @Post("/leave/room")
+  @Security("bearerAuth")
+  @Example<LeaveRoomResponse>(leaveRoomResponseExample)
+  public async leaveRoom(
+    @Body() requestBody: JoinRoomPayload,
+    @Request() req: express.Request
+  ): Promise<LeaveRoomResponse> {
+    return leaveRoom(requestBody, req.user as RequestUser);
   }
 }
 
@@ -187,4 +202,40 @@ const getJoinedRooms = async ({
     roomId: room.roomId,
     adminName: (room.adminId as any).name,
   }));
+};
+
+const leaveRoom = async (
+  { roomId }: JoinRoomPayload,
+  { userObjectId }: RequestUser
+): Promise<LeaveRoomResponse> => {
+  const room = await Rooms.findOne({ roomId });
+  if (!room) throw new Error("Room doesn't exist");
+
+  const roomMember = await Rooms.findOne({
+    roomId,
+    membersId: { $in: userObjectId },
+  });
+  if (!roomMember) throw new Error("You're not a member of this room");
+
+  const user = await Users.findById({ _id: userObjectId });
+  if (!user) throw new Error("User doesn't exist");
+
+  await Rooms.findOneAndUpdate(
+    { roomId },
+    {
+      $pull: { membersId: user._id },
+    }
+  );
+
+  await Users.findByIdAndUpdate(userObjectId, {
+    $pull: {
+      roomsId: room._id,
+    },
+  });
+
+  leaveRoomNotification(roomId, `${user.name} leaved ${room.title} room`);
+
+  return {
+    message: "Room leaved Successfully",
+  };
 };

@@ -63,6 +63,10 @@ export interface JoinRoomResponse {
   }[];
 }
 
+export interface LeaveRoomResponse {
+  message: string;
+}
+
 export interface GetJoinedRoomsResponse {
   title: string;
   description: string;

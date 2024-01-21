@@ -117,6 +117,14 @@ components:
                 - roomId
             type: object
             additionalProperties: false
+        LeaveRoomResponse:
+            properties:
+                message:
+                    type: string
+            required:
+                - message
+            type: object
+            additionalProperties: false
         PostRoomResponse:
             properties:
                 message:
@@ -340,6 +348,32 @@ paths:
                 -
                     bearerAuth: []
             parameters: []
+    /users/leave/room:
+        post:
+            operationId: LeaveRoom
+            responses:
+                '200':
+                    description: Ok
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/LeaveRoomResponse'
+                            examples:
+                                'Example 1':
+                                    value: {message: 'Room leaved Successfully'}
+            summary: 'User can leave the Room by providing roomId.'
+            tags:
+                - Users
+            security:
+                -
+                    bearerAuth: []
+            parameters: []
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/JoinRoomPayload'
     /rooms:
         post:
             operationId: CreateRoom
